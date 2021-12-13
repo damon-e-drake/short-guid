@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -9,6 +9,7 @@
     <RepositoryUrl>https://github.com/damon-e-drake/short-guid</RepositoryUrl>
     <PackageTags>Guid; ShortGuid</PackageTags>
     <PackageReleaseNotes>Updating to .Net 6 Core</PackageReleaseNotes>
+    <PackageId>ShortGuid</PackageId>
   </PropertyGroup>
 
 </Project>
