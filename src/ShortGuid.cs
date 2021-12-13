@@ -1,9 +1,15 @@
-﻿namespace DEDrake.ShortGuid {
+﻿using System.Text.RegularExpressions;
+
+namespace DEDrake {
   public struct ShortGuid {
-    public readonly static ShortGuid Empty = new(Guid.Empty);
+    private readonly static Regex GuidRegEx = new(@"^[0-9a-fA-F]{32}$");
 
     private readonly Guid _guid;
     private readonly string _value;
+
+    public readonly static ShortGuid Empty = new(Guid.Empty);
+
+    public Guid Guid { get => _guid; }
 
     public ShortGuid(string value) {
       _value = value;
@@ -38,6 +44,34 @@
       return _guid.GetHashCode();
     }
 
+    public static ShortGuid Parse(string value) {
+      if (string.IsNullOrWhiteSpace(value))
+        throw new ArgumentNullException(nameof(value));
+
+      value = value.Trim();
+
+      ShortGuid sg;
+
+      if (value.Length >= 22 && value.Length <=24) {
+        value = value.Replace("=", "");
+        sg = new(value);
+      }
+      else if (value.Length >= 32 && value.Length <= 38) {
+        value = value.Replace("{", "").Replace("}", "").Replace("-", "");
+        if (!GuidRegEx.IsMatch(value)) {
+          throw new FormatException("Guid string contained invalid characters.");
+        }
+        else {
+          sg = new ShortGuid(Guid.Parse(value));
+        }
+      }
+      else {
+        throw new FormatException("String was not in a valid format.");
+      }
+
+      return sg;
+    }
+
     public static ShortGuid NewGuid() {
       return new(Guid.NewGuid());
     }
@@ -55,11 +89,11 @@
 
     public static Guid Decode(string value) {
       value = value.Replace("_", "/").Replace("-", "+");
-      var buffer = Convert.FromBase64String(value + "==");
+      var buffer = value.EndsWith("==") ? Convert.FromBase64String(value) : Convert.FromBase64String(value + "==");
       return new Guid(buffer);
     }
 
-    public static bool operator ==(ShortGuid x, ShortGuid y) => x._guid == y._guid;
+    public static bool operator ==(ShortGuid x, ShortGuid y) => x._guid.Equals(y._guid);
 
     public static bool operator !=(ShortGuid x, ShortGuid y) => !(x == y);
 
