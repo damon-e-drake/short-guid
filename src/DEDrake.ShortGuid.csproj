@@ -1,20 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461;netstandard2.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net20;net35;net40;net45;netstandard1.0;netstandard1.3;netstandard2.0</TargetFrameworks>
 		<LangVersion>10.0</LangVersion>
-    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>2.0.1-pre</Version>
+    <Version>2.0.1</Version>
     <PackageProjectUrl>https://github.com/damon-e-drake/short-guid</PackageProjectUrl>
     <RepositoryUrl>https://github.com/damon-e-drake/short-guid</RepositoryUrl>
     <PackageTags>Guid; ShortGuid</PackageTags>
-    <PackageReleaseNotes>Updating to .Net 6 Core</PackageReleaseNotes>
+    <PackageReleaseNotes>Updating to all for Multi-Targeting</PackageReleaseNotes>
     <PackageId>ShortGuid</PackageId>
+    <Authors>Damon E. Drake</Authors>
+    <Description>Creates a url friendly base64 version of a Guid</Description>
+    <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Net.Http" Version="4.3.4" />
-  </ItemGroup>
 
 </Project>
