@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 
 namespace DEDrake {
   public struct ShortGuid {
@@ -7,7 +8,7 @@ namespace DEDrake {
     private readonly Guid _guid;
     private readonly string _value;
 
-    public readonly static ShortGuid Empty = new ShortGuid(Guid.Empty);
+    public readonly static ShortGuid Empty = new(Guid.Empty);
 
     public Guid Guid { get => _guid; }
 
@@ -43,9 +44,16 @@ namespace DEDrake {
     }
 
     public static ShortGuid Parse(string value) {
+#if NET40_OR_GREATER
       if (string.IsNullOrWhiteSpace(value))
         throw new ArgumentNullException(nameof(value));
+#else
+      if (string.IsNullOrEmpty(value))
+        throw new ArgumentNullException(nameof(value));
 
+      if (value.Trim() == "")
+        throw new ArgumentNullException(nameof(value));
+#endif
       value = value.Trim();
 
       ShortGuid sg;
@@ -60,7 +68,11 @@ namespace DEDrake {
           throw new FormatException("Guid string contained invalid characters.");
         }
         else {
+#if NET40_OR_GREATER
           sg = new ShortGuid(Guid.Parse(value));
+#else
+          sg = new ShortGuid(new Guid(value));
+#endif
         }
       }
       else {
@@ -82,11 +94,7 @@ namespace DEDrake {
     public static string Encode(Guid guid) {
       var encoded = Convert.ToBase64String(guid.ToByteArray());
       encoded = encoded.Replace("/", "_").Replace("+", "-");
-#if NET6_0_OR_GREATER
-      return encoded[..22];
-#else
       return encoded.Substring(0, 22);
-#endif
     }
 
     public static Guid Decode(string value) {
@@ -103,8 +111,8 @@ namespace DEDrake {
 
     public static implicit operator Guid(ShortGuid shortGuid) => shortGuid._guid;
 
-    public static implicit operator ShortGuid(string shortGuid) => new ShortGuid(shortGuid);
+    public static implicit operator ShortGuid(string shortGuid) => new(shortGuid);
 
-    public static implicit operator ShortGuid(Guid guid) => new ShortGuid(guid);
+    public static implicit operator ShortGuid(Guid guid) => new(guid);
   }
 }
