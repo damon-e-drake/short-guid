@@ -7,7 +7,7 @@ namespace DEDrake {
     private readonly Guid _guid;
     private readonly string _value;
 
-    public readonly static ShortGuid Empty = new(Guid.Empty);
+    public readonly static ShortGuid Empty = new ShortGuid(Guid.Empty);
 
     public Guid Guid { get => _guid; }
 
@@ -25,9 +25,7 @@ namespace DEDrake {
       return _value;
     }
 
-#pragma warning disable CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
     public override bool Equals(object obj) {
-#pragma warning restore CS8765 // Nullability of type of parameter doesn't match overridden member (possibly because of nullability attributes).
       if (obj is null)
         throw new ArgumentNullException(nameof(obj));
 
@@ -52,9 +50,9 @@ namespace DEDrake {
 
       ShortGuid sg;
 
-      if (value.Length >= 22 && value.Length <=24) {
+      if (value.Length >= 22 && value.Length <= 24) {
         value = value.Replace("=", "");
-        sg = new(value);
+        sg = new ShortGuid(value);
       }
       else if (value.Length >= 32 && value.Length <= 38) {
         value = value.Replace("{", "").Replace("}", "").Replace("-", "");
@@ -73,7 +71,7 @@ namespace DEDrake {
     }
 
     public static ShortGuid NewGuid() {
-      return new(Guid.NewGuid());
+      return new ShortGuid(Guid.NewGuid());
     }
 
     public static string Encode(string value) {
@@ -84,7 +82,11 @@ namespace DEDrake {
     public static string Encode(Guid guid) {
       var encoded = Convert.ToBase64String(guid.ToByteArray());
       encoded = encoded.Replace("/", "_").Replace("+", "-");
+#if NET6_0_OR_GREATER
       return encoded[..22];
+#else
+      return encoded.Substring(0, 22);
+#endif
     }
 
     public static Guid Decode(string value) {
@@ -101,8 +103,8 @@ namespace DEDrake {
 
     public static implicit operator Guid(ShortGuid shortGuid) => shortGuid._guid;
 
-    public static implicit operator ShortGuid(string shortGuid) => new(shortGuid);
+    public static implicit operator ShortGuid(string shortGuid) => new ShortGuid(shortGuid);
 
-    public static implicit operator ShortGuid(Guid guid) => new(guid);
+    public static implicit operator ShortGuid(Guid guid) => new ShortGuid(guid);
   }
 }
