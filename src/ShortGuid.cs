@@ -7,7 +7,7 @@ namespace DEDrake {
     private readonly Guid _guid;
     private readonly string _value;
 
-    public readonly static ShortGuid Empty = new(Guid.Empty);
+    public readonly static ShortGuid Empty = new ShortGuid(Guid.Empty);
 
     public Guid Guid { get => _guid; }
 
@@ -50,7 +50,7 @@ namespace DEDrake {
 
       ShortGuid sg;
 
-      if (value.Length >= 22 && value.Length <=24) {
+      if (value.Length >= 22 && value.Length <= 24) {
         value = value.Replace("=", "");
         sg = new ShortGuid(value);
       }
@@ -82,7 +82,11 @@ namespace DEDrake {
     public static string Encode(Guid guid) {
       var encoded = Convert.ToBase64String(guid.ToByteArray());
       encoded = encoded.Replace("/", "_").Replace("+", "-");
+#if NET6_0_OR_GREATER
+      return encoded[..22];
+#else
       return encoded.Substring(0, 22);
+#endif
     }
 
     public static Guid Decode(string value) {
@@ -99,8 +103,8 @@ namespace DEDrake {
 
     public static implicit operator Guid(ShortGuid shortGuid) => shortGuid._guid;
 
-    public static implicit operator ShortGuid(string shortGuid) => new(shortGuid);
+    public static implicit operator ShortGuid(string shortGuid) => new ShortGuid(shortGuid);
 
-    public static implicit operator ShortGuid(Guid guid) => new(guid);
+    public static implicit operator ShortGuid(Guid guid) => new ShortGuid(guid);
   }
 }

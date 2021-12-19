@@ -1,6 +1,6 @@
+using DEDrake;
 using System;
 using Xunit;
-using DEDrake;
 
 namespace UnitTests {
   public class ShortGuidUnitTests {
